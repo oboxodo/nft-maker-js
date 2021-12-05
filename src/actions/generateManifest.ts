@@ -180,7 +180,7 @@ export function traitIsCompatibleWithCurrentImage(
       let singleItem: Trait = getSingleTraitItemConfiguration(
         existingVal,
         // @ts-ignore
-        existing[existingVal].name
+        existing[existingVal]
       )
 
       let closure = singleItem?.conflicts
