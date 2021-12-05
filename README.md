@@ -210,7 +210,7 @@ module.exports = {
         //...
       ],
       options: {
-        excluded: true
+        exclude: true
       }
     }
   ]
