@@ -6,7 +6,7 @@ import {
   resolveConfiguration,
 } from '../util'
 import { find, shuffle, sumBy, times, isEqual } from 'lodash'
-import { Image, ImageDefinition, Task, Trait, TraitCategory } from '../defs'
+import { Image, ImageDefinition, IncompatibleTrait, Task, Trait, TraitCategory } from '../defs'
 
 let imageData: Image[] = []
 let attempts = 0
@@ -148,7 +148,15 @@ export function traitIsCompatibleWithCurrentImage(
   }
 
   // Backwards Check
-  const closure = maybeTrait.conflicts
+  let closure = maybeTrait.conflicts
+
+  if(maybeTrait.incompatible !== undefined) {
+    const incompatible = maybeTrait.incompatible
+    closure = (traitName: string, traitValue: string) => {
+      return Object.entries(incompatible).filter(traits => traits[0] == traitName && traits[1].includes(traitValue)).length > 0
+    }
+  }
+
   let backwards = true
 
   if (closure) {

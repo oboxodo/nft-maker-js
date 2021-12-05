@@ -17,6 +17,11 @@ export interface Trait {
   image?: string
   weight: number
   conflicts?(name: string, value: string): boolean
+  incompatible?: IncompatibleTrait
+}
+
+export interface IncompatibleTrait {
+  [key: string]: (string | number)[]
 }
 
 export interface Attribute {

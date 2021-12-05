@@ -35,6 +35,7 @@ const testConfig = {
           }
         },
         { name: 'White', weight: 20 },
+        { name: 'Yellow', weight: 20, incompatible: { Background: ['Midnight'] } },
       ],
     },
   ],
@@ -43,6 +44,7 @@ const testConfig = {
 const { traits } = testConfig
 const foregroundTrait = traits[1]
 const redForeground = foregroundTrait.items[0]
+const yellowForeground = foregroundTrait.items[2]
 
 describe('traitIsCompatibleWithCurrentImage', () => {
   it('confirms a proposed trait is compatible', async () => {
@@ -57,12 +59,24 @@ describe('traitIsCompatibleWithCurrentImage', () => {
     expect(result).toBe(true)
   })
 
-  it('confirms a proposed trait is incompatible', async () => {
+  it('confirms a proposed trait is incompatible using conflicts closure', async () => {
     let existingIncompatible = { Background: 'Midnight' }
 
     let result = traitIsCompatibleWithCurrentImage(
       foregroundTrait,
       redForeground,
+      existingIncompatible
+    )
+
+    expect(result).toBe(false)
+  })
+
+  it('confirms a proposed trait is incompatible using incompatible rule', async () => {
+    let existingIncompatible = { Background: 'Midnight' }
+
+    let result = traitIsCompatibleWithCurrentImage(
+      foregroundTrait,
+      yellowForeground,
       existingIncompatible
     )
 
