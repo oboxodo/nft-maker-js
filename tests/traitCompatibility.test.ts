@@ -1,5 +1,4 @@
 import { traitIsCompatibleWithCurrentImage } from '../src/actions/generateManifest'
-import { resolveConfiguration } from '../src/util'
 
 jest.mock('../src/util')
 
@@ -30,48 +29,41 @@ const testConfig = {
     {
       name: 'Foreground',
       items: [
-        { name: 'Red', weight: 20, incompatible: { Background: ['Midnight'] } },
+        { name: 'Red', weight: 20,
+          conflicts: (traitName: string, traitValue: string) => {
+            return traitName == "Background" && traitValue == "Midnight"
+          }
+        },
         { name: 'White', weight: 20 },
       ],
     },
   ],
 }
+
 const { traits } = testConfig
+const foregroundTrait = traits[1]
+const redForeground = foregroundTrait.items[0]
 
 describe('traitIsCompatibleWithCurrentImage', () => {
   it('confirms a proposed trait is compatible', async () => {
-    const resolveConfigMock = <jest.Mock<typeof resolveConfiguration>>(
-      resolveConfiguration
-    )
-
-    resolveConfigMock.mockReturnValue(testConfig as any)
-
-    let existing = {
-      Background: 'Midnight',
-    }
+    let existingCompatible = { Background: 'Blue' }
 
     let result = traitIsCompatibleWithCurrentImage(
-      { name: 'Red', weight: 10, incompatible: { Background: ['Midnight'] } },
-      existing
+      foregroundTrait,
+      redForeground,
+      existingCompatible
     )
 
     expect(result).toBe(true)
   })
 
   it('confirms a proposed trait is incompatible', async () => {
-    const resolveConfigMock = <jest.Mock<typeof resolveConfiguration>>(
-      resolveConfiguration
-    )
-
-    resolveConfigMock.mockReturnValue(testConfig as any)
-
-    let existing = {
-      Background: 'Midnight',
-    }
+    let existingIncompatible = { Background: 'Midnight' }
 
     let result = traitIsCompatibleWithCurrentImage(
-      { name: 'Red', weight: 10, incompatible: { Background: ['Midnight'] } },
-      existing
+      foregroundTrait,
+      redForeground,
+      existingIncompatible
     )
 
     expect(result).toBe(false)

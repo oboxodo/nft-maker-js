@@ -155,7 +155,7 @@ export function traitIsCompatibleWithCurrentImage(
     backwards = Object.keys(existing).reduce(
       (carry: boolean, val: string): boolean => {
         // @ts-ignore
-        let result = !closure(val, existing[val].name as string)
+        let result = !closure(val, existing[val] as string)
 
         if (!carry) {
           return false
@@ -175,7 +175,7 @@ export function traitIsCompatibleWithCurrentImage(
         existing[existingVal].name
       )
 
-      let closure = singleItem.conflicts
+      let closure = singleItem?.conflicts
 
       if (closure) {
         let result = !closure(category.name, maybeTrait.name)
