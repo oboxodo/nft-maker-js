@@ -177,13 +177,20 @@ export function traitIsCompatibleWithCurrentImage(
 
   const forwards = Object.keys(existing).reduce(
     (carry: boolean, existingVal: string): boolean => {
-      let singleItem = getSingleTraitItemConfiguration(
+      let singleItem: Trait = getSingleTraitItemConfiguration(
         existingVal,
         // @ts-ignore
         existing[existingVal].name
       )
 
       let closure = singleItem?.conflicts
+
+      if(singleItem?.incompatible !== undefined) {
+        const incompatible = singleItem.incompatible
+        closure = (traitName: string, traitValue: string) => {
+          return Object.entries(incompatible).filter(traits => traits[0] == traitName && traits[1].includes(traitValue)).length > 0
+        }
+      }
 
       if (closure) {
         let result = !closure(category.name, maybeTrait.name)
